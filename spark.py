@@ -16,12 +16,20 @@ series_data_raw = [ i.strip() for i in sys.stdin.read().split() ]
 # Convert valid floats to float, discard remaining elements
 series_data = filter(lambda x: x is not None, map(convert_to_float, series_data_raw))
 
+minimum = min(series_data)
 maximum = max(series_data)
+data_range = maximum - minimum
 
-if maximum == 0.0:
-    print "Cannot normalize when maximum is zero."
+if data_range == 0.0:
+    print "Cannot normalize when range is zero."
     sys.exit(1)
 
-sparked_series_data = map(lambda x: spark_chars[int(x * 7 / maximum)], series_data)
+# sparked_series_data = map(lambda x: spark_chars[int(x * 7 / maximum)], series_data)
+sparked_series_data = map(
+    lambda x: spark_chars[
+        int((x - minimum) * 7 / data_range)
+    ],
+    series_data
+)
 
 print ''.join(sparked_series_data)
