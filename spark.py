@@ -25,7 +25,7 @@ def sparkify(series):
     if data_range == 0.0:
         raise Exception("Cannot normalize when range is zero.")
 
-    return ''.join(
+    return u''.join(
         map(
             lambda x: spark_chars[int(round((x - minimum) * 7.0 / data_range))],
             series
@@ -50,4 +50,4 @@ def guess_series(input_string):
     )
 
 if __name__ == "__main__":
-    print sparkify(guess_series2(sys.stdin.read()))
+    print sparkify(guess_series(sys.stdin.read()))
