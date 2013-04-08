@@ -1,34 +1,56 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-import sys
+import string, sys
 
 spark_chars = u"▁▂▃▄▅▆▇█"
 
-def convert_to_float(i):
+def _convert_to_float(i):
     try:
         return float(i)
     except:
         return None
 
-# Read all data from stdin, split by whitespace
-series_data_raw = [ i.strip() for i in sys.stdin.read().split() ]
+def sparkify(series):
+    u"""Converts <series> to a sparkline string.
+    
+    Example:
+        Input: [ 0.5, 1.2, 3.5, 7.3, 8.0, 12.5, 13.2,
+                15.0, 14.2, 11.8, 6.1, 1.9 ]
+        Output: ▁▁▂▄▅▇▇██▆▄▂
+    """
+    minimum = min(series)
+    maximum = max(series)
+    data_range = maximum - minimum
 
-# Convert valid floats to float, discard remaining elements
-series_data = filter(lambda x: x is not None,
-                     map(convert_to_float, series_data_raw)
-                    )
+    if data_range == 0.0:
+        raise Exception("Cannot normalize when range is zero.")
 
-minimum = min(series_data)
-maximum = max(series_data)
-data_range = maximum - minimum
+    return ''.join(
+        map(
+            lambda x: spark_chars[int(round((x - minimum) * 7.0 / data_range))],
+            series
+        )
+    )
 
-if data_range == 0.0:
-    print "Cannot normalize when range is zero."
-    sys.exit(1)
+def guess_series(input_string):
+    u"""Tries to convert <input_string> into a list of floats.
 
-sparked_series_data = map(
-    lambda x: spark_chars[int(round((x - minimum) * 7.0 / data_range))],
-    series_data
-)
+    Example:
+        Input: "0.5 1.2 3.5 7.3 8 12.5, 13.2, 15.0, 14.2, 11.8, 6.1, 1.9"
+        Output: [ 0.5, 1.2, 3.5, 7.3, 8.0, 12.5, 13.2,
+                15.0, 14.2, 11.8, 6.1, 1.9 ]
+    """
+    return filter(
+        lambda x: x is not None, # Remove entires we couldn't convert
+        map(
+            _convert_to_float, # Function to convert to float
+            [
+                # Try to remove common junk data around floats
+                i.strip(string.whitespace + "," + string.ascii_letters)
+                for i in input_string.split()
+            ]
+        )
+    )
 
-print ''.join(sparked_series_data)
+if __name__ == "__main__":
+    print sparkify(guess_series(sys.stdin.read()))
