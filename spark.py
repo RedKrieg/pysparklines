@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-import string, sys
+import re, string, sys
 
 spark_chars = u"▁▂▃▄▅▆▇█"
 
@@ -40,17 +40,14 @@ def guess_series(input_string):
         Output: [ 0.5, 1.2, 3.5, 7.3, 8.0, 12.5, 13.2,
                 15.0, 14.2, 11.8, 6.1, 1.9 ]
     """
+    float_finder = re.compile("([-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)")
     return filter(
         lambda x: x is not None, # Remove entires we couldn't convert
         map(
             _convert_to_float, # Function to convert to float
-            [
-                # Try to remove common junk data around floats
-                i.strip(string.whitespace + "," + string.ascii_letters)
-                for i in input_string.split()
-            ]
+            float_finder.findall(input_string)
         )
     )
 
 if __name__ == "__main__":
-    print sparkify(guess_series(sys.stdin.read()))
+    print sparkify(guess_series2(sys.stdin.read()))
