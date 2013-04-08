@@ -21,13 +21,12 @@ def sparkify(series):
     minimum = min(series)
     maximum = max(series)
     data_range = maximum - minimum
-
     if data_range == 0.0:
         raise Exception("Cannot normalize when range is zero.")
-
+    coefficient = (len(spark_chars) - 1) / data_range
     return u''.join(
         map(
-            lambda x: spark_chars[int(round((x - minimum) * 7.0 / data_range))],
+            lambda x: spark_chars[int(round((x - minimum) * coefficient))],
             series
         )
     )
