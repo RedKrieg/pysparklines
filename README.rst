@@ -1,12 +1,12 @@
-========
-spark.py
-========
+===========
+pysparkline
+===========
 
 Python clone of https://github.com/holman/spark
 
-Takes series data via stdin and prints a sparkline representation.
+Takes series data via stdin, command line, or API and prints a sparkline representation.
 
-Utilizes utf-8 encoded characters in output.
+Output is always UTF-8 encoded.
 
 Usage:
 
