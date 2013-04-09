@@ -17,7 +17,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'spark = spark:main',
+            'sparkline = sparkline:main',
         ]
     },
     classifiers=[
