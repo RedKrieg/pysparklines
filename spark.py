@@ -65,10 +65,14 @@ def main():
     
     if os.isatty(0) and not args.data:
         parser.print_help()
+        sys.exit(1)
     elif args.data:
-        print sparkify(guess_series(u' '.join(args.data)))
+        arg_string = u' '.join(args.data)
+        output = sparkify(guess_series(arg_string))
     else:
-        print sparkify(guess_series(sys.stdin.read()))
+        output = sparkify(guess_series(sys.stdin.read()))
+
+    print output.encode('utf-8', 'ignore')
 
 if __name__ == "__main__":
     main()
