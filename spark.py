@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-import math, re, string, sys
+import math, os, re, string, sys
 
 spark_chars = u"▁▂▃▄▅▆▇█"
 
@@ -49,5 +49,26 @@ def guess_series(input_string):
         )
     )
 
+def main():
+    u"""Reads from command line args or stdin and prints a sparkline from the
+    data.  Requires at least 2 data points as input.
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(description=main.__doc__)
+    parser.add_argument(
+        "data",
+        nargs=argparse.REMAINDER,
+        help="Floating point data, any delimiter."
+    )
+    args = parser.parse_args()
+    
+    if os.isatty(0) and not args.data:
+        parser.print_help()
+    elif args.data:
+        print sparkify(guess_series(u' '.join(args.data)))
+    else:
+        print sparkify(guess_series(sys.stdin.read()))
+
 if __name__ == "__main__":
-    print sparkify(guess_series(sys.stdin.read()))
+    main()
