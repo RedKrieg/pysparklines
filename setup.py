@@ -8,7 +8,7 @@ long_description = "%s" % readme
 
 setup(
     name='pysparklines',
-    version=0.2,
+    version=0.3,
     description="pysparklines is a unicode sparkline generation library.",
     long_description=long_description,
     author="Brandon Whaley",

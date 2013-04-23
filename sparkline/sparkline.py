@@ -3,6 +3,7 @@
 import math, os, re, string, sys
 
 spark_chars = u"▁▂▃▄▅▆▇█"
+"""Eight unicode characters of (nearly) steadily increasing height."""
 
 def _convert_to_float(i):
     try:
@@ -14,34 +15,46 @@ def sparkify(series):
     u"""Converts <series> to a sparkline string.
     
     Example:
-        Input: [ 0.5, 1.2, 3.5, 7.3, 8.0, 12.5, 13.2,
-                15.0, 14.2, 11.8, 6.1, 1.9 ]
-        Output: ▁▁▂▄▅▇▇██▆▄▂
+    >>> sparkify([ 0.5, 1.2, 3.5, 7.3, 8.0, 12.5, 13.2, 15.0, 14.2, 11.8, 6.1,
+    ... 1.9 ])
+    u'▁▁▂▄▅▇▇██▆▄▂'
+
+    >>> sparkify([1, 1, -2, 3, -5, 8, -13])
+    u'▆▆▅▆▄█▁'
+
+    Raises ValueError if input data cannot be converted to float.
+    Raises TypeError if series is not an iterable.
     """
+    series = [ float(i) for i in series ]
     minimum = min(series)
     maximum = max(series)
     data_range = maximum - minimum
     if data_range == 0.0:
-        raise Exception("Cannot normalize when range is zero.")
-    coefficient = (len(spark_chars) - 1) / data_range
-    return u''.join(
-        map(
-            lambda x: spark_chars[int(round((x - minimum) * coefficient))],
-            series
-        )
-    )
+        # Graph a baseline if every input value is equal.
+        return u''.join([ spark_chars[0] for i in series ])
+    coefficient = (len(spark_chars) - 1.0) / data_range
+    return u''.join([
+        spark_chars[
+            int(round((x - minimum) * coefficient))
+        ] for x in series
+    ])
 
 def guess_series(input_string):
     u"""Tries to convert <input_string> into a list of floats.
 
     Example:
-        Input: "0.5 1.2 3.5 7.3 8 12.5, 13.2, 15.0, 14.2, 11.8, 6.1, 1.9"
-        Output: [ 0.5, 1.2, 3.5, 7.3, 8.0, 12.5, 13.2,
-                15.0, 14.2, 11.8, 6.1, 1.9 ]
+    >>> guess_series("0.5 1.2 3.5 7.3 8 12.5, 13.2,"
+    ... "15.0, 14.2, 11.8, 6.1, 1.9")
+    [0.5, 1.2, 3.5, 7.3, 8.0, 12.5, 13.2, 15.0, 14.2, 11.8, 6.1, 1.9]
     """
     float_finder = re.compile("([-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)")
+    return ([
+        i for i in [
+            _convert_to_float(j) for j in float_finder.findall(input_string)
+        # Remove entires we couldn't convert to a sensible value.
+        ] if i is not None and not math.isnan(i) and not math.isinf(i)
+    ])
     return filter(
-        # Remove entires we couldn't convert
         lambda x: x is not None and not math.isnan(x) and not math.isinf(x),
         map(
             _convert_to_float, # Function to convert to float
@@ -68,9 +81,14 @@ def main():
         sys.exit(1)
     elif args.data:
         arg_string = u' '.join(args.data)
-        output = sparkify(guess_series(arg_string))
     else:
-        output = sparkify(guess_series(sys.stdin.read()))
+        arg_string = sys.stdin.read()
+
+    try:
+        output = sparkify(guess_series(arg_string))
+    except:
+        print >> sys.stderr, "Could not convert input data to valid sparkline"
+        sys.exit(1)
 
     print output.encode('utf-8', 'ignore')
 
