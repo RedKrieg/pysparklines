@@ -54,13 +54,6 @@ def guess_series(input_string):
         # Remove entires we couldn't convert to a sensible value.
         ] if i is not None and not math.isnan(i) and not math.isinf(i)
     ])
-    return filter(
-        lambda x: x is not None and not math.isnan(x) and not math.isinf(x),
-        map(
-            _convert_to_float, # Function to convert to float
-            float_finder.findall(input_string)
-        )
-    )
 
 def main():
     u"""Reads from command line args or stdin and prints a sparkline from the
