@@ -59,6 +59,7 @@ def main():
     data.  Requires at least 2 data points as input.
     """
     import argparse
+    from pkg_resources import require
 
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument(
@@ -66,8 +67,19 @@ def main():
         nargs=argparse.REMAINDER,
         help="Floating point data, any delimiter."
     )
+    parser.add_argument(
+        "--version",
+        "-v",
+        action="store_true",
+        help="Display the version number and exit."
+    )
     args = parser.parse_args()
     
+    if args.version:
+        version = require("pysparklines")[0].version
+        print version
+        sys.exit(0)
+
     if os.isatty(0) and not args.data:
         parser.print_help()
         sys.exit(1)
