@@ -77,7 +77,7 @@ def main():
     
     if args.version:
         version = require("pysparklines")[0].version
-        print version
+        print (version)
         sys.exit(0)
 
     if os.isatty(0) and not args.data:
@@ -91,10 +91,10 @@ def main():
     try:
         output = sparkify(guess_series(arg_string))
     except:
-        print >> sys.stderr, "Could not convert input data to valid sparkline"
+        sys.stderr.write("Could not convert input data to valid sparkline\n")
         sys.exit(1)
 
-    print output.encode('utf-8', 'ignore')
+    print (output.encode('utf-8', 'ignore'))
 
 if __name__ == "__main__":
     main()
