@@ -10,7 +10,7 @@ setuptools.setup(
     version=1.0,
     description="pysparklines is a unicode sparkline generation library.",
     long_description=long_description,
-    long_description_content_type="text/markdown"
+    long_description_content_type="text/markdown",
     author="Brandon Whaley",
     author_email="redkrieg@gmail.com",
     url="https://github.com/RedKrieg/pysparklines",
