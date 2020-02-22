@@ -2,11 +2,9 @@
 pysparkline
 ===========
 
-Python clone of https://github.com/holman/spark
+Python 3 clone of https://github.com/holman/spark
 
 Takes series data via stdin, command line, or API and prints a sparkline representation.
-
-Output is always UTF-8 encoded.
 
 Usage:
 
@@ -14,5 +12,5 @@ Usage:
   █▆▃▁
 - $ ``echo "1.0 1.0 2.0 3.0 5.0 8.0 13.0" | sparkline``
   ▁▁▂▂▃▅█
-- $ ``python -c "import sparkline; print sparkline.sparkify([1.0, 2.0, 3.0, 4.0]).encode('utf-8')"``
+- $ ``python3 -c "import sparkline; print(sparkline.sparkify([1.0, 2.0, 3.0, 4.0]))"``
   ▁▃▆█

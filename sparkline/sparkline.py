@@ -97,7 +97,7 @@ def main():
     
     if args.version:
         version = require("pysparklines")[0].version
-        print (version)
+        print(version)
         sys.exit(0)
 
     if os.isatty(0) and not args.data:
