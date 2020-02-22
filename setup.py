@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, find_packages
+import setuptools
 
-readme = open('README.rst').read()
+with open('README.md') as f:
+    long_description = f.read()
 
-long_description = "%s" % readme
-
-setup(
+setuptools.setup(
     name='pysparklines',
     version=1.0,
     description="pysparklines is a unicode sparkline generation library.",
     long_description=long_description,
+    long_description_content_type="text/markdown"
     author="Brandon Whaley",
     author_email="redkrieg@gmail.com",
     url="https://github.com/RedKrieg/pysparklines",
