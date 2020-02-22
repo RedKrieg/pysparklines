@@ -14,7 +14,7 @@ setuptools.setup(
     author="Brandon Whaley",
     author_email="redkrieg@gmail.com",
     url="https://github.com/RedKrieg/pysparklines",
-    packages=find_packages(),
+    packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
             'sparkline = sparkline:main',
