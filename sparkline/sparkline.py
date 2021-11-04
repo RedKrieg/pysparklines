@@ -13,7 +13,7 @@ def _convert_to_float(n):
 def _isan(n):
     return not math.isnan(n)
 
-def sparkify(series, minimum=None, maximum=None):
+def sparkify(series, minimum=None, maximum=None, rows=1):
     u"""Converts <series> to a sparkline string.
     
     Example:
@@ -37,16 +37,35 @@ def sparkify(series, minimum=None, maximum=None):
     if data_range == 0.0:
         # Graph a baseline if every input value is equal.
         return u''.join([ spark_chars[0] for i in series ])
-    coefficient = (len(spark_chars) - 1.0) / data_range
+    row_res = len(spark_chars)
+    resolution = row_res * rows
+    coefficient = (resolution - 1.0) / data_range
 
     def clamp(n):
         return min(max(n, minimum), maximum)
 
-    def spark_for(n):
-        return spark_chars[int(round((clamp(n) - minimum) * coefficient))]
+    def spark_index(n):
+        """An integer from 0 to (resolution-1) proportional to the data range"""
+        return int(round((clamp(n) - minimum) * coefficient))
 
-    return u''.join(spark_for(n) if _isan(n) else ' ' for n in series)
-
+    output = []
+    for r in range(rows-1, -1, -1):
+        row_out = []
+        row_min = row_res * r
+        row_max = row_min + row_res - 1
+        for n in series:
+            if not _isan(n):
+                row_out.append(' ')
+                continue
+            i = spark_index(n)
+            if i < row_min:
+                row_out.append(' ')
+            elif i > row_max:
+                row_out.append(spark_chars[-1])
+            else:
+                row_out.append(spark_chars[i % row_res])
+        output.append(u''.join(row_out))
+    return os.linesep.join(output)
 
 def guess_series(input_string):
     u"""Tries to convert <input_string> into a list of floats.
@@ -93,6 +112,13 @@ def main():
         type=float,
         help="Set larger values to MAX."
     )
+    parser.add_argument(
+        "--rows",
+        "-r",
+        type=int,
+        default=1,
+        help="Number of rows high the graph will be."
+    )
     args = parser.parse_args()
     
     if args.version:
@@ -109,9 +135,9 @@ def main():
         arg_string = sys.stdin.read()
 
     try:
-        print(sparkify(guess_series(arg_string), minimum=args.min, maximum=args.max))
+        print(sparkify(guess_series(arg_string), minimum=args.min, maximum=args.max, rows=args.rows))
     except:
-        sys.stderr.write("Could not convert input data to valid sparkline\n")
+        sys.stderr.write("Could not convert input data to valid sparkline" + os.linesep)
         sys.exit(1)
 
 if __name__ == "__main__":
