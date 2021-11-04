@@ -43,7 +43,7 @@ def sparkify(series, minimum=None, maximum=None):
         return min(max(n, minimum), maximum)
 
     def spark_for(n):
-        return spark_chars[int(round(clamp(n) - minimum) * coefficient)]
+        return spark_chars[int(round((clamp(n) - minimum) * coefficient))]
 
     return u''.join(spark_for(n) if _isan(n) else ' ' for n in series)
 
