@@ -15,7 +15,7 @@ Usage:
 ```
 ▁▁▂▂▃▅█
 ```
-- $ `$ seq 20 | sort -R | sparkline -r2`
+- $ `seq 20 | sort -R | sparkline -r2`
 ```
 ▃▁ █▂    ▂▆▅  ▄▇▆   
 ██▃██▅▇▄▁███▃▇███▂█▆
