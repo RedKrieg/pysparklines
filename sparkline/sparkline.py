@@ -11,7 +11,7 @@ def _convert_to_float(n):
         return None
 
 def _isan(n):
-    return not math.isnan(n)
+    return not math.isnan(n) and not math.isinf(n)
 
 def sparkify(series, minimum=None, maximum=None, rows=1):
     u"""Converts <series> to a sparkline string.
@@ -28,7 +28,7 @@ def sparkify(series, minimum=None, maximum=None, rows=1):
     Raises TypeError if series is not an iterable.
     """
     series = [ float(n) for n in series ]
-    if all(math.isnan(n) for n in series):
+    if all(not _isan(n) for n in series):
         return u' ' * len(series)
 
     minimum = min(filter(_isan, series)) if minimum is None else minimum
