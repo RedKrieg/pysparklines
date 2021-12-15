@@ -4,15 +4,6 @@ import math, os, re, string, sys
 spark_chars = u"▁▂▃▄▅▆▇█"
 """Eight unicode characters of (nearly) steadily increasing height."""
 
-def _convert_to_float(n):
-    try:
-        return float(n)
-    except:
-        return None
-
-def _isan(n):
-    return not math.isnan(n) and not math.isinf(n)
-
 def sparkify(series, minimum=None, maximum=None, rows=1):
     u"""Converts <series> to a sparkline string.
     
@@ -28,15 +19,15 @@ def sparkify(series, minimum=None, maximum=None, rows=1):
     Raises TypeError if series is not an iterable.
     """
     series = [ float(n) for n in series ]
-    if all(not _isan(n) for n in series):
+    if all(not math.isfinite(n) for n in series):
         return u' ' * len(series)
 
-    minimum = min(filter(_isan, series)) if minimum is None else minimum
-    maximum = max(filter(_isan, series)) if maximum is None else maximum
+    minimum = min(filter(math.isfinite, series)) if minimum is None else minimum
+    maximum = max(filter(math.isfinite, series)) if maximum is None else maximum
     data_range = maximum - minimum
     if data_range == 0.0:
         # Graph a baseline if every input value is equal.
-        return u''.join([ spark_chars[0] for i in series ])
+        return u''.join([ spark_chars[0] if math.isfinite(i) else u' ' for i in series ])
     row_res = len(spark_chars)
     resolution = row_res * rows
     coefficient = (resolution - 1.0) / data_range
@@ -54,7 +45,7 @@ def sparkify(series, minimum=None, maximum=None, rows=1):
         row_min = row_res * r
         row_max = row_min + row_res - 1
         for n in series:
-            if not _isan(n):
+            if not math.isfinite(n):
                 row_out.append(' ')
                 continue
             i = spark_index(n)
@@ -66,6 +57,12 @@ def sparkify(series, minimum=None, maximum=None, rows=1):
                 row_out.append(spark_chars[i % row_res])
         output.append(u''.join(row_out))
     return os.linesep.join(output)
+
+def _convert_to_float(n):
+    try:
+        return float(n)
+    except:
+        return None
 
 def guess_series(input_string):
     u"""Tries to convert <input_string> into a list of floats.
@@ -80,7 +77,7 @@ def guess_series(input_string):
         i for i in [
             _convert_to_float(j) for j in float_finder.findall(input_string)
         # Remove entires we couldn't convert to a sensible value.
-        ] if i is not None and not math.isinf(i)
+        ] if i is not None
     ])
 
 def main():
@@ -136,7 +133,7 @@ def main():
 
     try:
         print(sparkify(guess_series(arg_string), minimum=args.min, maximum=args.max, rows=args.rows))
-    except:
+    except Exception: # should be more specific, but better than a bare except clause
         sys.stderr.write("Could not convert input data to valid sparkline" + os.linesep)
         sys.exit(1)
 
