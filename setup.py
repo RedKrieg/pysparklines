@@ -7,7 +7,7 @@ with open('README.md') as f:
 
 setuptools.setup(
     name='pysparklines',
-    version=1.2,
+    version=1.3,
     description="pysparklines is a unicode sparkline generation library.",
     long_description=long_description,
     long_description_content_type="text/markdown",
