@@ -1,6 +1,8 @@
 # vim: set fileencoding=utf-8 :
 import math, os, re, string, sys
 
+__all__ = ['guess_series', 'main', 'spark_chars', 'sparkify']
+
 spark_chars = u"▁▂▃▄▅▆▇█"
 """Eight unicode characters of (nearly) steadily increasing height."""
 
