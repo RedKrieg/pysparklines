@@ -23,6 +23,22 @@ def test_nan():
     assert sparkline.sparkify([float("nan"), 0, 1]) == u" ▁█"
 
 
+def test_all_nan_or_inf():
+    assert sparkline.sparkify([float("nan"), float("-inf")]) == u"  "
+
+
+def test_min():
+    assert sparkline.sparkify([1, 2, 3, 4], minimum=2) == u"▁▁▅█"
+
+
+def test_max():
+    assert sparkline.sparkify([1, 2, 3, 4], maximum=3) == u"▁▅██"
+
+
+def test_min_max():
+    assert sparkline.sparkify([1, 2, 3, 4], minimum=2, maximum=3) == u"▁▁██"
+
+
 def test_fib():
     assert sparkline.sparkify([1.0, 1.0, 2.0, 3.0, 5.0, 8.0, 13.0]) == u"▁▁▂▂▃▅█"
 

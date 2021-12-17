@@ -65,7 +65,7 @@ def sparkify(series, minimum=None, maximum=None, rows=1):
 def _convert_to_float(n):
     try:
         return float(n)
-    except:
+    except ValueError:
         return None
 
 
@@ -77,7 +77,9 @@ def guess_series(input_string):
     ... "15.0, 14.2, 11.8, 6.1, 1.9")
     [0.5, 1.2, 3.5, 7.3, 8.0, nan, 12.5, 13.2, 15.0, 14.2, 11.8, 6.1, 1.9]
     """
-    float_finder = re.compile(r"(nan|[-+]?[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)", re.I)
+    float_finder = re.compile(
+        r"(nan|[-+]?inf|[-+]?[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)", re.I
+    )
     return [
         i
         for i in [
@@ -89,13 +91,15 @@ def guess_series(input_string):
     ]
 
 
-def main():
+def main(argv=None):
     u"""Reads from command line args or stdin and prints a sparkline from the
     data.  Requires at least 2 data points as input.
     """
     import argparse
     from pkg_resources import require
 
+    if not argv:  # pragma: no cover
+        argv = sys.argv[1:]
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument("data", nargs="*", help="Floating point data, any delimiter.")
     parser.add_argument(
@@ -113,19 +117,19 @@ def main():
         default=1,
         help="Number of rows high the graph will be.",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
-    if args.version:
+    if args.version:  # pragma: no cover
         version = require("pysparklines")[0].version
         print(version)
         sys.exit(0)
 
-    if os.isatty(0) and not args.data:
+    if os.isatty(0) and not args.data:  # pragma: no cover
         parser.print_help()
         sys.exit(1)
     elif args.data:
         arg_string = u" ".join(args.data)
-    else:
+    else:  # pragma: no cover
         arg_string = sys.stdin.read()
 
     try:
@@ -137,10 +141,10 @@ def main():
                 rows=args.rows,
             )
         )
-    except Exception:  # should be more specific, but better than a bare except clause
+    except Exception:  # pragma: no cover
         sys.stderr.write("Could not convert input data to valid sparkline" + os.linesep)
         sys.exit(1)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
