@@ -1,14 +1,20 @@
 # vim: set fileencoding=utf-8 :
-import math, os, re, string, sys
+import argparse, math, os, re, string, sys
+from importlib.metadata import version, PackageNotFoundError
 
 __all__ = ["guess_series", "main", "spark_chars", "sparkify"]
 
-spark_chars = u"▁▂▃▄▅▆▇█"
+try:
+    __version__ = version("pysparklines")
+except PackageNotFoundError:
+    __version__ = "0.0.0"
+
+spark_chars = "▁▂▃▄▅▆▇█"
 """Eight unicode characters of (nearly) steadily increasing height."""
 
 
 def sparkify(series, minimum=None, maximum=None, rows=1):
-    u"""Converts <series> to a sparkline string.
+    """Converts <series> to a sparkline string.
 
     Example:
     >>> sparkify([ 0.5, 1.2, 3.5, 7.3, 8.0, 12.5, float("nan"), 15.0, 14.2, 11.8, 6.1,
@@ -23,14 +29,14 @@ def sparkify(series, minimum=None, maximum=None, rows=1):
     """
     series = [float(n) for n in series]
     if all(not math.isfinite(n) for n in series):
-        return u" " * len(series)
+        return " " * len(series)
 
     minimum = min(filter(math.isfinite, series)) if minimum is None else minimum
     maximum = max(filter(math.isfinite, series)) if maximum is None else maximum
     data_range = maximum - minimum
     if data_range == 0.0:
         # Graph a baseline if every input value is equal.
-        return u"".join([spark_chars[0] if math.isfinite(i) else u" " for i in series])
+        return "".join([spark_chars[0] if math.isfinite(i) else " " for i in series])
     row_res = len(spark_chars)
     resolution = row_res * rows
     coefficient = (resolution - 1.0) / data_range
@@ -58,7 +64,7 @@ def sparkify(series, minimum=None, maximum=None, rows=1):
                 row_out.append(spark_chars[-1])
             else:
                 row_out.append(spark_chars[i % row_res])
-        output.append(u"".join(row_out))
+        output.append("".join(row_out))
     return os.linesep.join(output)
 
 
@@ -70,7 +76,7 @@ def _convert_to_float(n):
 
 
 def guess_series(input_string):
-    u"""Tries to convert <input_string> into a list of floats.
+    """Tries to convert <input_string> into a list of floats.
 
     Example:
     >>> guess_series("0.5 1.2 3.5 7.3 8 nan 12.5, 13.2,"
@@ -92,11 +98,9 @@ def guess_series(input_string):
 
 
 def main(argv=None):
-    u"""Reads from command line args or stdin and prints a sparkline from the
+    """Reads from command line args or stdin and prints a sparkline from the
     data.  Requires at least 2 data points as input.
     """
-    import argparse
-    from pkg_resources import require
 
     if not argv:  # pragma: no cover
         argv = sys.argv[1:]
@@ -120,15 +124,14 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     if args.version:  # pragma: no cover
-        version = require("pysparklines")[0].version
-        print(version)
+        print(__version__)
         sys.exit(0)
 
     if os.isatty(0) and not args.data:  # pragma: no cover
         parser.print_help()
         sys.exit(1)
     elif args.data:
-        arg_string = u" ".join(args.data)
+        arg_string = " ".join(args.data)
     else:  # pragma: no cover
         arg_string = sys.stdin.read()
 

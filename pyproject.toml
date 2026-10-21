@@ -1,3 +1,68 @@
 [build-system]
-requires = ["setuptools >= 51.0.0", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pysparklines"
+version = "1.5"
+description = "Python 3 clone of Zach Holman's BASH sparkline project"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "BSD-2-Clause"
+authors = [
+    {name = "Brandon Whaley", email = "redkrieg@gmail.com"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/redkrieg/pysparklines"
+Issues = "https://github.com/redkrieg/pysparklines/issues"
+
+[project.scripts]
+sparkline = "sparkline:main"
+
+[tool.setuptools]
+packages = ["sparkline"]
+
+[tool.setuptools.data-files]
+"share/man/man1" = ["man/sparkline.1"]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.pytest.ini_options]
+addopts = "--cov sparkline --cov-branch --cov-report term-missing"
+
+[tool.black]
+line-length = 88
+target-version = ['py39', 'py310', 'py311', 'py312', 'py313']
+include = '\.py$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+

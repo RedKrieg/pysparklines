@@ -1,4 +1,0 @@
-include README.rst
-include LICENSE
-recursive-include sparkline *.py
-recursive-include man *
